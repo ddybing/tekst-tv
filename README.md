@@ -1,6 +1,6 @@
 # Tekst-TV arkiv
 <img src="docs/tekst-tv-eksempel.jpg" height="400">
-Dette er en samling av sider fra tekst-TV hos, fortrinnsvis, NRK og TV2. Innholdet er hentet hovedsaklig fra VHS- og Betamax-kassetter.
+Dette er en samling av sider fra tekst-TV hos, fortrinnsvis, NRK og TV2. Innholdet er hentet fra VHS- og Betamax-kassetter.
 
 Samlingen er hentet ut ved å først foreta et RF-opptak av FM-signalet på videokassetten. Deretter dekodes dette ved hjelp av programvare fra [vhs-decode](https://github.com/oyvindln/vhs-decode)-prosjektet, slik at man ender opp med en TBC-fil som inneholder Y-signalet til videoen. En separat fil for C-signalet lages også i samme prosess, men denne er ikke relevant
 
