@@ -1,38 +1,57 @@
 .App {
+  padding: 2rem;
+  background-color: #000;
+  min-height: 100vh;
+}
+
+.teletext-page {
+  padding: 1rem;
+}
+
+h2 {
+  font-size: 36px;
+  color: #ffff00; /* Yellow */
+  margin-bottom: 1.5rem;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+h3 {
+  font-size: 28px;
+  color: #00ffff; /* Cyan */
+  margin-bottom: 1rem;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+h4 {
+  font-size: 24px;
+  color: #ff00ff; /* Magenta */
+  margin-bottom: 0.5rem;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+ul {
+  list-style-type: none;
+  padding-left: 20px;
+}
+
+li {
+  margin-bottom: 0.5rem;
+}
+
+.channel-item {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
 }
 
-.App-link {
-  color: #61dafb;
+.channel-number {
+  color: #fff; /* White */
+  font-size: 36px; /* Increased font size */
+  width: 60px; /* Adjust as needed */
+  text-align: left;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.channel-name {
+  color: #ffff00; /* Yellow */
+  font-size: 36px; /* Increased font size */
+  flex-grow: 1;
+  text-align: left;
 }

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
+import Header from './Header';
+import TeletextTitle from './TeletextTitle'; // Import TeletextTitle
 
 function App() {
   const [archive, setArchive] = useState(null);
@@ -26,37 +28,27 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
-        <h1>Teletext Archive</h1>
+      <Header />
+      <div className="teletext-page">
+        <TeletextTitle /> {/* Add the TeletextTitle component */}
         {loading && <p>Loading...</p>}
         {error && <p>Error: {error.message}</p>}
         {archive && (
           <div>
-            <h2>Channels</h2>
+            <h2>Kanaler</h2>
             <ul>
-              {Object.keys(archive).map(channel => (
+              {Object.keys(archive).map((channel, index) => (
                 <li key={channel}>
-                  <h3>{channel}</h3>
-                  {Object.keys(archive[channel]).length > 0 ? (
-                    <ul>
-                      {Object.keys(archive[channel]).map(date => (
-                        <li key={date}>
-                          <h4>{date}</h4>
-                          <ul>
-                            {archive[channel][date].map(page => (
-                              <li key={page}>{page}</li>
-                            ))}
-                          </ul>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : <p>No dates available for this channel.</p>}
+                  <div className="channel-item">
+                    <span className="channel-number">{100 + index}</span>
+                    <span className="channel-name">{channel}</span>
+                  </div>
                 </li>
               ))}
             </ul>
           </div>
         )}
-      </header>
+      </div>
     </div>
   );
 }

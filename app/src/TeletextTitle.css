@@ -1,0 +1,29 @@
+.teletext-title-container {
+  display: flex;
+  justify-content: center; /* Center the whole title */
+  margin: 2rem 0; /* Some margin above and below */
+}
+
+.teletext-title-char {
+  display: inline-flex; /* Use flex for centering content inside */
+  justify-content: center;
+  align-items: center;
+  width: 70px; /* Increased size of the box */
+  height: 70px; /* Increased size of the box */
+  border: 2px solid yellow; /* Yellow border */
+  background-color: yellow; /* Changed to yellow */
+  color: black; /* Changed to black */
+  font-family: 'VT323', monospace;
+  font-size: 60px; /* Increased font size */
+  margin-left: -5px; /* Negative margin for overlap */
+  box-shadow: 0 0 0 2px black; /* Slight black border outside yellow */
+}
+
+/* Vertical offset for alternating letters */
+.teletext-title-char.char-0 {
+  transform: translateY(0); /* First height */
+}
+
+.teletext-title-char.char-1 {
+  transform: translateY(15px); /* Second height, moved down */
+}
