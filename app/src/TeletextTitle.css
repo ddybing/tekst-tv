@@ -19,11 +19,4 @@
   box-shadow: 0 0 0 2px black; /* Slight black border outside yellow */
 }
 
-/* Vertical offset for alternating letters */
-.teletext-title-char.char-0 {
-  transform: translateY(0); /* First height */
-}
 
-.teletext-title-char.char-1 {
-  transform: translateY(15px); /* Second height, moved down */
-}

@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import Header from './Header';
 import TeletextTitle from './TeletextTitle';
-import SimpleSelector from './SimpleSelector';
+import CrtEffect from './CrtEffect';
+import Sidebar from './Sidebar';
+import './Sidebar.css';
 
 function App() {
   const [archive, setArchive] = useState(null);
@@ -10,10 +12,9 @@ function App() {
   const [error, setError] = useState(null);
   const [selectedChannel, setSelectedChannel] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
-  const [viewMode, setViewMode] = useState('teletext');
-  const [currentPageIndex, setCurrentPageIndex] = useState(0); // Index of the current page in the list
-  const [pageContent, setPageContent] = useState(''); // Content of the current page
-  const [pageNumberInput, setPageNumberInput] = useState(''); // New state for page number input
+  const [currentPageIndex, setCurrentPageIndex] = useState(0);
+  const [pageContent, setPageContent] = useState('');
+  const [pageNumberInput, setPageNumberInput] = useState('');
 
   useEffect(() => {
     fetch('/index.json')
@@ -33,7 +34,6 @@ function App() {
       });
   }, []);
 
-  // Effect to fetch page content when channel, date, or page index changes
   useEffect(() => {
     if (selectedChannel && selectedDate && archive && archive[selectedChannel] && archive[selectedChannel][selectedDate]) {
       const pages = archive[selectedChannel][selectedDate];
@@ -41,12 +41,7 @@ function App() {
         const pageFilename = pages[currentPageIndex];
         const pageUrl = `/archive/${selectedChannel}/${selectedDate}/${pageFilename}`;
         fetch(pageUrl)
-          .then(response => {
-            if (!response.ok) {
-              throw new Error('Network response was not ok');
-            }
-            return response.text(); // Get raw HTML content
-          })
+          .then(response => response.text())
           .then(html => {
             setPageContent(html);
           })
@@ -58,37 +53,28 @@ function App() {
         setPageContent('<p>No pages available for this date.</p>');
       }
     } else {
-      setPageContent(''); // Clear content if no selection
+      setPageContent('');
     }
   }, [selectedChannel, selectedDate, currentPageIndex, archive]);
 
-
-  const handleChannelClick = (channel) => {
+  const handleChannelChange = (channel) => {
     setSelectedChannel(channel);
     setSelectedDate(null);
-    setCurrentPageIndex(0); // Reset page index when channel changes
+    setCurrentPageIndex(0);
   };
 
-  const handleDateClick = (date) => {
+  const handleDateChange = (date) => {
     setSelectedDate(date);
-    setCurrentPageIndex(0); // Reset page index when date changes
+    setCurrentPageIndex(0);
   };
 
   const handleBackClick = () => {
     if (selectedDate) {
       setSelectedDate(null);
-      setCurrentPageIndex(0); // Reset page index
     } else if (selectedChannel) {
       setSelectedChannel(null);
-      setCurrentPageIndex(0); // Reset page index
     }
-  };
-
-  const handleSelectPageFromSimple = (channel, date) => {
-    setSelectedChannel(channel);
-    setSelectedDate(date);
-    setCurrentPageIndex(0); // Reset page index
-    setViewMode('teletext');
+    setCurrentPageIndex(0);
   };
 
   const handlePageNumberChange = (event) => {
@@ -98,24 +84,20 @@ function App() {
   const handleGoToPage = () => {
     const pages = archive[selectedChannel][selectedDate];
     if (!pages) return;
-
     const targetPageNumber = parseInt(pageNumberInput, 10);
     if (isNaN(targetPageNumber)) return;
-
     const targetPageIndex = pages.findIndex(page => parseInt(page.replace('.html', ''), 10) === targetPageNumber);
-
     if (targetPageIndex !== -1) {
       setCurrentPageIndex(targetPageIndex);
-      setPageNumberInput(''); // Clear input after jump
+      setPageNumberInput('');
     } else {
-      alert('Page not found!'); // Simple feedback for now
+      alert('Page not found!');
     }
   };
 
   const handlePageNavigation = (direction) => {
     const pages = archive[selectedChannel][selectedDate];
     if (!pages) return;
-
     let newIndex = currentPageIndex;
     if (direction === 'next') {
       newIndex = (currentPageIndex + 1) % pages.length;
@@ -127,82 +109,60 @@ function App() {
 
   return (
     <div className="App">
-      <Header />
-      <div className="teletext-page">
-        <button className="teletext-button" onClick={() => setViewMode(viewMode === 'teletext' ? 'simple' : 'teletext')}>
-          Switch to {viewMode === 'teletext' ? 'Simple' : 'Teletext'} View
-        </button>
-
-        {viewMode === 'teletext' ? (
-          <>
-            <TeletextTitle />
-            {loading && <p>Loading...</p>}
-            {error && <p>Error: {error.message}</p>}
-            {archive && (
-              <div>
-                {selectedChannel && (
-                  <button className="teletext-button" onClick={handleBackClick}>Back</button>
-                )}
-
-                {!selectedChannel ? ( // Show channels
-                  <>
-                    <h2>Kanaler</h2>
-                    <ul>
-                      {Object.keys(archive).map((channel, index) => (
-                        <li key={channel}>
-                          <div className="channel-item" onClick={() => handleChannelClick(channel)}>
-                            <span className="channel-number">{100 + index}</span>
-                            <span className="channel-name">{channel}</span>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  </>
-                ) : !selectedDate ? ( // Show dates for selected channel
-                  <>
-                    <h2>{selectedChannel} - Dates</h2>
-                    <ul>
-                      {Object.keys(archive[selectedChannel]).length > 0 ? (
-                        Object.keys(archive[selectedChannel]).map((date, index) => (
-                          <li key={date}>
-                            <div className="date-item" onClick={() => handleDateClick(date)}>
-                              <span className="date-number">{100 + index}</span>
-                              <span className="date-name">{date}</span>
-                            </div>
-                          </li>
-                        ))
-                      ) : <p>No dates available for this channel.</p>}
-                    </ul>
-                  </>
-                ) : ( // Show page content
-                  <>
-                    <h2>{selectedChannel} - {selectedDate} - Page {archive[selectedChannel][selectedDate][currentPageIndex].replace('.html', '')}</h2>
-                    <div className="page-content" dangerouslySetInnerHTML={{ __html: pageContent }} />
-                    <div className="page-navigation">
-                      <button className="teletext-button" onClick={() => handlePageNavigation('prev')}>Prev</button>
-                      <button className="teletext-button" onClick={() => handlePageNavigation('next')}>Next</button>
-                    </div>
-                    <div className="page-jump">
-                      <input
-                        type="number"
-                        className="teletext-input"
-                        value={pageNumberInput}
-                        onChange={handlePageNumberChange}
-                        placeholder="Page No."
-                      />
-                      <button className="teletext-button" onClick={handleGoToPage}>Go</button>
-                    </div>
-                  </>
-                )}
-              </div>
-            )}
-          </>
-        ) : (
-          <>
-            <TeletextTitle /> {/* Add the TeletextTitle component */}
-            <SimpleSelector archive={archive} onSelectPage={handleSelectPageFromSimple} />
-          </>
-        )}
+      <Sidebar
+        archive={archive}
+        selectedChannel={selectedChannel}
+        selectedDate={selectedDate}
+        onChannelChange={handleChannelChange}
+        onDateChange={handleDateChange}
+      />
+      <div className="main-content">
+        <Header />
+        <TeletextTitle />
+        {archive && !selectedChannel && <h2>Kanaler</h2>}
+        <CrtEffect>
+          {loading && <p>Loading...</p>}
+          {error && <p>Error: {error.message}</p>}
+          {archive && selectedChannel && (
+            <div>
+              <button className="teletext-button" onClick={handleBackClick}>Back</button>
+              {!selectedDate ? (
+                <>
+                  <h2>{selectedChannel} - Dates</h2>
+                  <ul>
+                    {Object.keys(archive[selectedChannel]).map((date, index) => (
+                      <li key={date}>
+                        <div className="date-item" onClick={() => handleDateChange(date)}>
+                          <span className="date-number">{100 + index}</span>
+                          <span className="date-name">{date}</span>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              ) : (
+                <>
+                  <h2>{selectedChannel} - {selectedDate} - Page {archive[selectedChannel][selectedDate][currentPageIndex].replace('.html', '')}</h2>
+                  <div className="page-content" dangerouslySetInnerHTML={{ __html: pageContent }} />
+                  <div className="page-navigation">
+                    <button className="teletext-button" onClick={() => handlePageNavigation('prev')}>Prev</button>
+                    <button className="teletext-button" onClick={() => handlePageNavigation('next')}>Next</button>
+                  </div>
+                  <div className="page-jump">
+                    <input
+                      type="number"
+                      className="teletext-input"
+                      value={pageNumberInput}
+                      onChange={handlePageNumberChange}
+                      placeholder="Page No."
+                    />
+                    <button className="teletext-button" onClick={handleGoToPage}>Go</button>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+        </CrtEffect>
       </div>
     </div>
   );

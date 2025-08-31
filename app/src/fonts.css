@@ -1,0 +1,11 @@
+@font-face {
+    font-family:teletext;
+    src: url("./fonts/EuropeanTeletext.ttf") format("truetype"); /* Corrected path */
+    font-weight: normal;
+}
+
+@font-face {
+    font-family:teletext;
+    src: url("./fonts/EuropeanTeletextNuevo.ttf") format("truetype"); /* Corrected path */
+    font-weight: bold; /* Assuming Nuevo is bold */
+}

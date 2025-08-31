@@ -6,7 +6,7 @@ const TeletextTitle = () => {
   return (
     <div className="teletext-title-container">
       {text.split('').map((char, index) => (
-        <span key={index} className={`teletext-title-char char-${index % 2}`}>
+        <span key={index} className="teletext-title-char">
           {char}
         </span>
       ))}
