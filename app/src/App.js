@@ -198,7 +198,10 @@ function App() {
             )}
           </>
         ) : (
-          <SimpleSelector archive={archive} onSelectPage={handleSelectPageFromSimple} />
+          <>
+            <TeletextTitle /> {/* Add the TeletextTitle component */}
+            <SimpleSelector archive={archive} onSelectPage={handleSelectPageFromSimple} />
+          </>
         )}
       </div>
     </div>

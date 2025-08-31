@@ -37,7 +37,7 @@ const SimpleSelector = ({ archive, onSelectPage }) => {
 
   return (
     <div>
-      <h2>Simple Selector</h2>
+      <h2>Enkel visning</h2>
       <div>
         <label htmlFor="channel-select">Select Channel:</label>
         <select id="channel-select" value={selectedChannel} onChange={handleChannelChange}>
