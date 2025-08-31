@@ -15,6 +15,7 @@ function App() {
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [pageContent, setPageContent] = useState('');
   const [pageNumberInput, setPageNumberInput] = useState('');
+  const [crtEffectsEnabled, setCrtEffectsEnabled] = useState(true);
 
   useEffect(() => {
     fetch('/index.json')
@@ -68,6 +69,10 @@ function App() {
     setCurrentPageIndex(0);
   };
 
+  const handleCrtEffectToggle = () => {
+    setCrtEffectsEnabled(!crtEffectsEnabled);
+  };
+
   const handleBackClick = () => {
     if (selectedDate) {
       setSelectedDate(null);
@@ -115,12 +120,13 @@ function App() {
         selectedDate={selectedDate}
         onChannelChange={handleChannelChange}
         onDateChange={handleDateChange}
+        crtEffectsEnabled={crtEffectsEnabled}
+        onCrtEffectToggle={handleCrtEffectToggle}
       />
       <div className="main-content">
         <Header />
         <TeletextTitle />
-        {archive && !selectedChannel && <h2>Kanaler</h2>}
-        <CrtEffect>
+        <CrtEffect crtEffectsEnabled={crtEffectsEnabled}>
           {loading && <p>Loading...</p>}
           {error && <p>Error: {error.message}</p>}
           {archive && selectedChannel && (

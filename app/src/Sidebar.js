@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Sidebar = ({ archive, selectedChannel, selectedDate, onChannelChange, onDateChange }) => {
+const Sidebar = ({ archive, selectedChannel, selectedDate, onChannelChange, onDateChange, crtEffectsEnabled, onCrtEffectToggle }) => {
   const channels = archive ? Object.keys(archive) : [];
 
   const handleChannelChange = (event) => {
@@ -30,6 +30,15 @@ const Sidebar = ({ archive, selectedChannel, selectedDate, onChannelChange, onDa
             <option key={date} value={date}>{date}</option>
           ))}
         </select>
+      </div>
+      <div className="checkbox-container">
+        <label htmlFor="crt-effect-toggle">CRT Effects</label>
+        <input
+          type="checkbox"
+          id="crt-effect-toggle"
+          checked={crtEffectsEnabled}
+          onChange={onCrtEffectToggle}
+        />
       </div>
     </div>
   );
