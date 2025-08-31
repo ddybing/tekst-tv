@@ -6,6 +6,21 @@
 
 .teletext-page {
   padding: 1rem;
+  position: relative; /* Needed for pseudo-elements */
+  overflow: hidden; /* Hide overflow from glow/scanlines */
+}
+
+.teletext-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(rgba(0, 0, 0, 0.2) 50%, transparent 50%);
+  background-size: 100% 4px; /* Adjust height of scanlines */
+  z-index: 1;
+  pointer-events: none; /* Allow clicks through */
 }
 
 h2 {
@@ -37,8 +52,7 @@ li {
 }
 
 .channel-item {
-  display: flex;
-  justify-content: space-between;
+  display: inline-flex; /* Changed to inline-flex */
   margin-bottom: 0.5rem;
 }
 
@@ -54,4 +68,83 @@ li {
   font-size: 36px; /* Increased font size */
   flex-grow: 1;
   text-align: left;
+}
+
+.teletext-button {
+  background-color: #0000ff; /* Blue */
+  color: #ffff00; /* Yellow */
+  border: 2px solid #ffff00;
+  padding: 10px 20px;
+  font-family: 'VT323', monospace;
+  font-size: 24px;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+
+.teletext-button:hover {
+  background-color: #0000cc;
+}
+
+.date-item {
+  display: inline-flex; /* Changed to inline-flex */
+  margin-bottom: 0.5rem;
+}
+
+.date-number {
+  color: #fff; /* White */
+  font-size: 28px;
+  width: 60px; /* Adjust as needed */
+  text-align: left;
+}
+
+.date-name {
+  color: #00ff00; /* Green */
+  font-size: 28px;
+  flex-grow: 1;
+  text-align: left;
+}
+
+.page-content {
+  border: 1px solid #333;
+  padding: 1rem;
+  margin-top: 1rem;
+  background-color: #000;
+  color: #fff;
+  min-height: 300px; /* Placeholder height */
+  overflow: auto;
+}
+
+.page-navigation {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+h2, h3, h4,
+.channel-number, .channel-name,
+.date-number, .date-name {
+  text-shadow: 0 0 8px currentColor; /* Glow effect */
+}
+
+.page-jump {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.teletext-input {
+  background-color: #000;
+  color: #fff;
+  border: 2px solid #ffff00;
+  padding: 10px;
+  font-family: 'VT323', monospace;
+  font-size: 24px;
+  width: 120px;
+  text-align: center;
+  margin-right: 10px;
+}
+
+.teletext-input:focus {
+  outline: none;
+  border-color: #00ffff;
 }
