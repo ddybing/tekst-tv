@@ -8,7 +8,7 @@ Denne TBC-filen for Y-signalet mates så inn i en programvare utviklet av [ali12
 
 Videokassetter begynner å bli gamle, og selv om tekst-TV er konstruert for å være godt beskyttet mot feil, så vil selv de beste rekonstrueringene inneholde feil. Jeg har derfor gjennomgått hver side manuelt for å rette opp i eventuelle feil etter beste evne. 
 
-Programvaren som jeg har brukt til å redigere tekst-TV-sidene direkte er blant annet [Teletext Meddler](https://andrewnile.co.uk/software/). Jeg har også gjort enkelte endringer direkte i HTML-filene, for eksempel for å legge til norske tegn. Teletext Meddler støtter (tilsynelatende) ikke det norske tegnsettet man finner i Level 1.5 av tekst-TV, og derfor ender blant annet Ø opp som Ö. 
+Programvaren som jeg har brukt til å redigere tekst-TV-sidene direkte er blant annet [Teletext Meddler](https://andrewnile.co.uk/software/).  
 
 
 
