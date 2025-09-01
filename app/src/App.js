@@ -45,6 +45,8 @@ function App() {
           .then(response => response.text())
           .then(html => {
             setPageContent(html);
+            const pageNumber = parseInt(pageFilename.replace('.html', ''), 10);
+            setPageNumberInput(pageNumber.toString());
           })
           .catch(err => {
             console.error("Failed to fetch page content:", err);
@@ -62,11 +64,13 @@ function App() {
     setSelectedChannel(channel);
     setSelectedDate(null);
     setCurrentPageIndex(0);
+    setPageNumberInput(''); // Clear page number input
   };
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
     setCurrentPageIndex(0);
+    setPageNumberInput(''); // Clear page number input
   };
 
   const handleCrtEffectToggle = () => {
@@ -129,20 +133,8 @@ function App() {
         <CrtEffect crtEffectsEnabled={crtEffectsEnabled}>
           {loading && <p>Loading...</p>}
           {error && <p>Error: {error.message}</p>}
-          {archive && selectedChannel && (
-            <div>
-              
-              {!selectedDate ? (
-                null
-              ) : (
-                <>
-                  
-                  
-                  
-                  
-                </>
-              )}
-            </div>
+          {pageContent && (
+            <div dangerouslySetInnerHTML={{ __html: pageContent }} />
           )}
         </CrtEffect>
       </div>

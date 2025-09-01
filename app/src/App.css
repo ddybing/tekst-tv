@@ -117,9 +117,7 @@ li {
   border: 1px solid #333;
   padding: 1rem;
   margin-top: 1rem;
-  background-color: #000;
   color: #fff;
-  min-height: 300px; /* Placeholder height */
   overflow: auto;
 }
 
