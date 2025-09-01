@@ -1,7 +1,7 @@
 import React from 'react';
 import './CrtEffect.css';
 
-const CrtEffect = ({ children, crtEffectsEnabled, pageContent }) => {
+const CrtEffect = ({ children, crtEffectsEnabled }) => {
   return (
     <div className="tvFrame">
       <div className="crtScreen">
@@ -11,10 +11,10 @@ const CrtEffect = ({ children, crtEffectsEnabled, pageContent }) => {
         {crtEffectsEnabled && (
           <>
             <div className="scanlines"></div>
-            <div className={`screenBand ${pageContent ? 'hide-band' : ''}`}></div>
+            <div className="screenBand"></div>
           </>
         )}
-        <div className={`snow ${pageContent ? 'hide-snow' : ''}`}></div>
+        <div className="snow"></div>
       </div>
     </div>
   );
