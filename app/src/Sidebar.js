@@ -42,7 +42,7 @@ const Sidebar = ({ archive, selectedChannel, selectedDate, onChannelChange, onDa
         <select id="date-select" value={selectedDate || ''} onChange={handleDateChange} disabled={!selectedChannel}>
           <option value="" disabled>Velg en dato</option>
           {selectedChannel && archive[selectedChannel] && Object.keys(archive[selectedChannel]).map(date => (
-            <option key={date} value={date}>{date}</option>
+            <option key={date} value={date}>{date.replace(/-/g, '.')}</option>
           ))}
         </select>
       </div>
