@@ -130,7 +130,7 @@ function App() {
       <div className="main-content">
         <Header />
         <TeletextTitle />
-        <CrtEffect crtEffectsEnabled={crtEffectsEnabled}>
+        <CrtEffect crtEffectsEnabled={crtEffectsEnabled} pageContent={pageContent}>
           {loading && <p>Loading...</p>}
           {error && <p>Error: {error.message}</p>}
           {pageContent && (
