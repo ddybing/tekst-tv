@@ -55,7 +55,7 @@
   color: #ffff00; /* Yellow */
 }
 
-.page-jump-container input[type="number"] {
+.page-jump-container input[type="text"] {
   width: calc(100% - 50px); /* Adjust width to make space for button */
   padding: 8px;
   background-color: #000;

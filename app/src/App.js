@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './App.css';
 import Header from './Header';
 import TeletextTitle from './TeletextTitle';
@@ -16,6 +16,69 @@ function App() {
   const [pageContent, setPageContent] = useState('');
   const [pageNumberInput, setPageNumberInput] = useState('');
   const [crtEffectsEnabled, setCrtEffectsEnabled] = useState(true);
+
+  const [numberBuffer, setNumberBuffer] = useState('');
+
+  const pageContentRef = useRef(null);
+
+  const handleGoToPage = useCallback((targetPageNumber) => {
+    const pages = archive[selectedChannel][selectedDate];
+    if (!pages) return;
+    if (isNaN(targetPageNumber)) return;
+    const targetPageIndex = pages.findIndex(page => parseInt(page.replace('.html', ''), 10) === targetPageNumber);
+    if (targetPageIndex !== -1) {
+      setCurrentPageIndex(targetPageIndex);
+      setPageNumberInput(targetPageNumber.toString());
+    } else {
+      // Page not found, do nothing (stay on current page)
+    }
+  }, [archive, selectedChannel, selectedDate]);
+
+  useEffect(() => {
+    if (!selectedChannel || !selectedDate) {
+      return; // Do not attach listener if channel or date not selected
+    }
+
+    const handleKeyDown = (event) => {
+      // Ignore key presses if an input field is focused
+      if (event.target.tagName === 'INPUT' || event.target.tagName === 'SELECT' || event.target.tagName === 'TEXTAREA') {
+        return;
+      }
+
+      const isNumber = event.key >= '0' && event.key <= '9';
+
+      if (event.key === 'Enter') {
+        event.preventDefault(); // Prevent default Enter behavior
+        if (numberBuffer.length === 3) {
+          const pageNumber = parseInt(numberBuffer, 10);
+          handleGoToPage(pageNumber);
+        }
+        setNumberBuffer(''); // Always clear buffer on Enter
+      } else if (isNumber) {
+        event.preventDefault(); // Prevent default number key behavior
+        setNumberBuffer((prevBuffer) => {
+          let newBuffer = prevBuffer + event.key;
+          if (newBuffer.length === 3) {
+            const pageNumber = parseInt(newBuffer, 10);
+            handleGoToPage(pageNumber);
+            return ''; // Clear buffer after 3 digits
+          } else if (newBuffer.length > 3) {
+            newBuffer = newBuffer.substring(newBuffer.length - 3);
+          }
+          return newBuffer;
+        });
+      } else {
+        // Clear buffer if a non-numeric key is pressed
+        setNumberBuffer('');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleGoToPage, selectedChannel, selectedDate]);
 
   useEffect(() => {
     fetch('/index.json')
@@ -90,20 +153,6 @@ function App() {
     setPageNumberInput(event.target.value);
   };
 
-  const handleGoToPage = () => {
-    const pages = archive[selectedChannel][selectedDate];
-    if (!pages) return;
-    const targetPageNumber = parseInt(pageNumberInput, 10);
-    if (isNaN(targetPageNumber)) return;
-    const targetPageIndex = pages.findIndex(page => parseInt(page.replace('.html', ''), 10) === targetPageNumber);
-    if (targetPageIndex !== -1) {
-      setCurrentPageIndex(targetPageIndex);
-      setPageNumberInput('');
-    } else {
-      alert('Page not found!');
-    }
-  };
-
   const handlePageNavigation = (direction) => {
     const pages = archive[selectedChannel][selectedDate];
     if (!pages) return;
@@ -126,9 +175,12 @@ function App() {
         onDateChange={handleDateChange}
         crtEffectsEnabled={crtEffectsEnabled}
         onCrtEffectToggle={handleCrtEffectToggle}
+        pageNumberInput={pageNumberInput}
+        onPageNumberChange={handlePageNumberChange}
+        onGoToPage={handleGoToPage}
       />
       <div className="main-content">
-        <Header />
+        <Header numberBuffer={numberBuffer} currentPageIndex={currentPageIndex} selectedChannel={selectedChannel} selectedDate={selectedDate} archive={archive} />
         <TeletextTitle />
         <CrtEffect crtEffectsEnabled={crtEffectsEnabled} pageContent={pageContent}>
           {loading && <p>Loading...</p>}
