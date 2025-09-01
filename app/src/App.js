@@ -131,39 +131,15 @@ function App() {
           {error && <p>Error: {error.message}</p>}
           {archive && selectedChannel && (
             <div>
-              <button className="teletext-button" onClick={handleBackClick}>Back</button>
+              
               {!selectedDate ? (
-                <>
-                  <h2>{selectedChannel} - Dates</h2>
-                  <ul>
-                    {Object.keys(archive[selectedChannel]).map((date, index) => (
-                      <li key={date}>
-                        <div className="date-item" onClick={() => handleDateChange(date)}>
-                          <span className="date-number">{100 + index}</span>
-                          <span className="date-name">{date}</span>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </>
+                null
               ) : (
                 <>
-                  <h2>{selectedChannel} - {selectedDate} - Page {archive[selectedChannel][selectedDate][currentPageIndex].replace('.html', '')}</h2>
-                  <div className="page-content" dangerouslySetInnerHTML={{ __html: pageContent }} />
-                  <div className="page-navigation">
-                    <button className="teletext-button" onClick={() => handlePageNavigation('prev')}>Prev</button>
-                    <button className="teletext-button" onClick={() => handlePageNavigation('next')}>Next</button>
-                  </div>
-                  <div className="page-jump">
-                    <input
-                      type="number"
-                      className="teletext-input"
-                      value={pageNumberInput}
-                      onChange={handlePageNumberChange}
-                      placeholder="Page No."
-                    />
-                    <button className="teletext-button" onClick={handleGoToPage}>Go</button>
-                  </div>
+                  
+                  
+                  
+                  
                 </>
               )}
             </div>
