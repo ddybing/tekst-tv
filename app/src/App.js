@@ -103,11 +103,8 @@ function App() {
       const pages = archive[selectedChannel][selectedDate];
       if (pages.length > 0) {
         const pageFilename = pages[currentPageIndex];
-        // Convert selectedDate from YYYY-MM-DD to DD-MM-YYYY for folder name
-        const [year, month, day] = selectedDate.split('-');
-        const folderDate = `${day}-${month}-${year}`;
-
-        const pageUrl = `/archive/${selectedChannel}/${folderDate}/${pageFilename}`;
+        // Use selectedDate directly as it matches folder name (DD-MM-YYYY)
+        const pageUrl = `/archive/${selectedChannel}/${selectedDate}/${pageFilename}`;
         fetch(pageUrl)
           .then(response => response.text())
           .then(html => {
