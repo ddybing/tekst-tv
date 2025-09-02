@@ -1,6 +1,17 @@
-# Tekst-TV arkiv
+# Arkiv for tekst-TV
 <img src="docs/tekst-tv-eksempel.jpg" height="400">
-Dette er en samling av sider fra tekst-TV hos, fortrinnsvis, NRK og TV2. Innholdet er hentet fra VHS- og Betamax-kassetter.
+
+Husker du tekst-TV? Du vet, den siden med korte nyhetsoverskrifter og lavoppløst grafikk, som du ved et uhell trykket inn på når du skulle skifte kanal. 
+
+Dette er en samling av sider fra tekst-TV hos, fortrinnsvis, NRK og TV2. Innholdet er hentet fra VHS- og Betamax-kassetter. Samlingen utvides stadig. 
+
+En *live* utgave er tilgjengelig ved å klikke på linken under. Den oppdateres fortløpende med alle sidene som er arkivert her i repoet.
+
+
+
+[](https://text.ddybing.no/)
+
+
 
 Samlingen er hentet ut ved å først foreta et RF-opptak av FM-signalet på videokassetten. Deretter dekodes dette ved hjelp av programvare fra [vhs-decode](https://github.com/oyvindln/vhs-decode)-prosjektet, slik at man ender opp med en TBC-fil som inneholder Y-signalet til videoen. En separat fil for C-signalet lages også i samme prosess, men denne er ikke relevant
 
