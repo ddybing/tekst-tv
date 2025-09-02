@@ -60,13 +60,16 @@ const Sidebar = ({ archive, selectedChannel, selectedDate, onChannelChange, onDa
         <button onClick={onGoToPage} disabled={!selectedDate}>Gå</button>
       </div>
       <div className="checkbox-container">
-        <label htmlFor="crt-effect-toggle">CRT Effects</label>
+        <label htmlFor="crt-effect-toggle">CRT Effekt</label>
         <input
           type="checkbox"
           id="crt-effect-toggle"
           checked={crtEffectsEnabled}
           onChange={onCrtEffectToggle}
         />
+      </div>
+      <div className="description-container">
+        <p>Velg kanal og dato for å vise tekst-TV. Bruk tallene på tastaturet til å skrive inn sidenummer, f.eks. 103 for side 103.</p>
       </div>
     </div>
   );
