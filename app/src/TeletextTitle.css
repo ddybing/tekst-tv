@@ -1,7 +1,19 @@
 .teletext-title-container {
   display: flex;
   justify-content: center; /* Center the whole title */
-  margin: 2rem 0; /* Some margin above and below */
+  margin: 2rem 0 4rem 0;
+  position: relative;
+}
+
+.teletext-title-container::after {
+  content: '';
+  position: absolute;
+  bottom: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 110%;
+  height: 3px;
+  background-color: yellow;
 }
 
 .teletext-title-char {
