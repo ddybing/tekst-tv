@@ -34,6 +34,16 @@ try {
   for (const channel of channels) {
     const channelPath = path.join(archivePath, channel);
     const dates = getDirectories(channelPath);
+
+    // Sort dates chronologically
+    dates.sort((a, b) => {
+      const partsA = a.split('-').map(Number); // [DD, MM, YYYY]
+      const partsB = b.split('-').map(Number); // [DD, MM, YYYY]
+      const dateA = new Date(partsA[2], partsA[1] - 1, partsA[0]);
+      const dateB = new Date(partsB[2], partsB[1] - 1, partsB[0]);
+      return dateA - dateB;
+    });
+
     archiveIndex[channel] = {};
 
     for (const date of dates) {
