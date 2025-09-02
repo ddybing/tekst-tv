@@ -9,7 +9,9 @@ En *live* utgave er tilgjengelig ved å klikke på linken under. Den oppdateres 
 
 
 
-[](https://text.ddybing.no/)
+[text.ddybing.no](https://text.ddybing.no/)
+
+
 
 
 
