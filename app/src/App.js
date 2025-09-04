@@ -19,7 +19,7 @@ function App() {
 
   const [numberBuffer, setNumberBuffer] = useState('');
 
-  const pageContentRef = useRef(null);
+  const pageContentContainerRef = useRef(null);
 
   const handleGoToPage = useCallback((targetPageNumber) => {
     const pages = archive[selectedChannel][selectedDate];
@@ -124,6 +124,31 @@ function App() {
     }
   }, [selectedChannel, selectedDate, currentPageIndex, archive]);
 
+  useEffect(() => {
+    const container = pageContentContainerRef.current;
+    if (!container) return;
+
+    const handleClick = (event) => {
+        if (event.target.tagName === 'A') {
+            event.preventDefault();
+
+            const href = event.target.getAttribute('href');
+            if (href) {
+                const pageNumber = parseInt(href.replace('.html', ''), 10);
+                if (!isNaN(pageNumber)) {
+                    handleGoToPage(pageNumber);
+                }
+            }
+        }
+    };
+
+    container.addEventListener('click', handleClick);
+
+    return () => {
+        container.removeEventListener('click', handleClick);
+    };
+  }, [pageContent, handleGoToPage]);
+
   const handleChannelChange = (channel) => {
     setSelectedChannel(channel);
     setSelectedDate(null);
@@ -187,7 +212,7 @@ function App() {
           {loading && <p>Loading...</p>}
           {error && <p>Error: {error.message}</p>}
           {pageContent && (
-            <div dangerouslySetInnerHTML={{ __html: pageContent }} />
+            <div ref={pageContentContainerRef} dangerouslySetInnerHTML={{ __html: pageContent }} />
           )}
         </CrtEffect>
       </div>
