@@ -12,6 +12,7 @@ function App() {
   const [error, setError] = useState(null);
   const [selectedChannel, setSelectedChannel] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedTime, setSelectedTime] = useState(null);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [subPageIndex, setSubPageIndex] = useState(0);
   const [subPages, setSubPages] = useState([]);
@@ -31,7 +32,8 @@ function App() {
     const targetPage = targetPageNumber.toString();
     setPageNumberInput(targetPage);
 
-    const pages = archive[selectedChannel][selectedDate];
+    const dateData = archive[selectedChannel][selectedDate];
+    const pages = selectedTime ? dateData[selectedTime] : dateData;
     if (!pages) return;
 
     const pagesWithSameBase = pages.filter(page => page.startsWith(targetPage + '.') || page.startsWith(targetPage + '-'));
@@ -49,7 +51,7 @@ function App() {
         setSubPages([]);
       }
     }
-  }, [archive, selectedChannel, selectedDate]);
+  }, [archive, selectedChannel, selectedDate, selectedTime]);
 
   useEffect(() => {
     if (subPages.length > 1 && carouselEnabled) {
@@ -128,8 +130,18 @@ function App() {
 
   useEffect(() => {
     if (selectedChannel && selectedDate && archive && archive[selectedChannel] && archive[selectedChannel][selectedDate]) {
-      const pages = archive[selectedChannel][selectedDate];
-      if (pages.length > 0) {
+      const dateData = archive[selectedChannel][selectedDate];
+      const times = Array.isArray(dateData) ? [] : Object.keys(dateData);
+
+      let timeToUse = selectedTime;
+      if (!timeToUse && times.length > 0) {
+        timeToUse = times[0];
+        setSelectedTime(times[0]);
+      }
+
+      const pages = timeToUse ? dateData[timeToUse] : dateData;
+
+      if (pages && pages.length > 0) {
         let pageFilename;
         if (subPages.length > 0) {
           pageFilename = subPages[subPageIndex];
@@ -137,7 +149,10 @@ function App() {
           pageFilename = pages[currentPageIndex];
         }
 
-        const pageUrl = `/archive/${selectedChannel}/${selectedDate}/${pageFilename}`;
+        const pageUrl = timeToUse
+          ? `/archive/${selectedChannel}/${selectedDate}/${timeToUse}/${pageFilename}`
+          : `/archive/${selectedChannel}/${selectedDate}/${pageFilename}`;
+
         fetch(pageUrl)
           .then(response => response.text())
           .then(html => {
@@ -155,7 +170,7 @@ function App() {
     } else {
       setPageContent('');
     }
-  }, [selectedChannel, selectedDate, currentPageIndex, subPageIndex, subPages, archive]);
+  }, [selectedChannel, selectedDate, selectedTime, currentPageIndex, subPageIndex, subPages, archive]);
 
   useEffect(() => {
     const container = pageContentContainerRef.current;
@@ -185,6 +200,7 @@ function App() {
   const handleChannelChange = (channel) => {
     setSelectedChannel(channel);
     setSelectedDate(null);
+    setSelectedTime(null);
     setCurrentPageIndex(0);
     setSubPageIndex(0);
     setSubPages([]);
@@ -193,6 +209,15 @@ function App() {
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
+    setSelectedTime(null);
+    setCurrentPageIndex(0);
+    setSubPageIndex(0);
+    setSubPages([]);
+    setPageNumberInput('');
+  };
+
+  const handleTimeChange = (time) => {
+    setSelectedTime(time);
     setCurrentPageIndex(0);
     setSubPageIndex(0);
     setSubPages([]);
@@ -223,7 +248,8 @@ function App() {
   };
 
   const handlePageNavigation = (direction) => {
-    const pages = archive[selectedChannel][selectedDate];
+    const dateData = archive[selectedChannel][selectedDate];
+    const pages = selectedTime ? dateData[selectedTime] : dateData;
     if (!pages) return;
 
     const currentPageFilename = pages[currentPageIndex];
@@ -255,8 +281,10 @@ function App() {
         archive={archive}
         selectedChannel={selectedChannel}
         selectedDate={selectedDate}
+        selectedTime={selectedTime}
         onChannelChange={handleChannelChange}
         onDateChange={handleDateChange}
+        onTimeChange={handleTimeChange}
         crtEffectsEnabled={crtEffectsEnabled}
         onCrtEffectToggle={handleCrtEffectToggle}
         carouselEnabled={carouselEnabled}
