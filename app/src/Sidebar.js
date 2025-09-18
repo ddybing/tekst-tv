@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Sidebar = ({ archive, selectedChannel, selectedDate, onChannelChange, onDateChange, crtEffectsEnabled, onCrtEffectToggle, pageNumberInput, onPageNumberChange, onGoToPage }) => {
+const Sidebar = ({ archive, selectedChannel, selectedDate, onChannelChange, onDateChange, crtEffectsEnabled, onCrtEffectToggle, carouselEnabled, onCarouselToggle, pageNumberInput, onPageNumberChange, onGoToPage }) => {
   const channels = archive ? Object.keys(archive) : [];
 
   const handleChannelChange = (event) => {
@@ -11,19 +11,15 @@ const Sidebar = ({ archive, selectedChannel, selectedDate, onChannelChange, onDa
     onDateChange(event.target.value);
   };
 
-  const handleKeyPress = (event) => {
-    if (event.key === 'Enter') {
-      onGoToPage();
-    }
+  const handleGoToPageClick = () => {
+    onGoToPage(pageNumberInput);
   };
 
-  // Format the pageNumberInput for display
-  let displayPageNumber = pageNumberInput;
-  if (pageNumberInput.length > 0 && pageNumberInput.length < 3) {
-    displayPageNumber = pageNumberInput + '_'.repeat(3 - pageNumberInput.length);
-  } else if (pageNumberInput.length === 0) {
-    displayPageNumber = ''; // Keep placeholder if empty
-  }
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      onGoToPage(pageNumberInput);
+    }
+  };
 
 
   return (
@@ -51,13 +47,14 @@ const Sidebar = ({ archive, selectedChannel, selectedDate, onChannelChange, onDa
         <input
           type="text" // Changed to text to allow underscores
           id="page-number-input"
-          value={displayPageNumber}
+          value={pageNumberInput}
           onChange={onPageNumberChange}
           onKeyPress={handleKeyPress}
           placeholder="Sidenummer"
           disabled={!selectedDate}
+          autoComplete="off"
         />
-        <button onClick={onGoToPage} disabled={!selectedDate}>Gå</button>
+        <button onClick={handleGoToPageClick} disabled={!selectedDate}>Gå</button>
       </div>
       <div className="checkbox-container">
         <label htmlFor="crt-effect-toggle">CRT Effekt</label>
@@ -66,6 +63,16 @@ const Sidebar = ({ archive, selectedChannel, selectedDate, onChannelChange, onDa
           id="crt-effect-toggle"
           checked={crtEffectsEnabled}
           onChange={onCrtEffectToggle}
+        />
+      </div>
+      <div className="checkbox-container">
+        <label htmlFor="carousel-toggle" title="Veksle mellom undersider automatisk">Veksle undersider</label>
+        <input
+          type="checkbox"
+          id="carousel-toggle"
+          checked={carouselEnabled}
+          onChange={onCarouselToggle}
+          title="Veksle mellom undersider automatisk"
         />
       </div>
       <div className="description-container">

@@ -13,34 +13,63 @@ function App() {
   const [selectedChannel, setSelectedChannel] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
+  const [subPageIndex, setSubPageIndex] = useState(0);
+  const [subPages, setSubPages] = useState([]);
   const [pageContent, setPageContent] = useState('');
   const [pageNumberInput, setPageNumberInput] = useState('');
   const [crtEffectsEnabled, setCrtEffectsEnabled] = useState(true);
+  const [carouselEnabled, setCarouselEnabled] = useState(true);
 
   const [numberBuffer, setNumberBuffer] = useState('');
 
   const pageContentContainerRef = useRef(null);
+  const carouselTimeoutRef = useRef(null);
 
   const handleGoToPage = useCallback((targetPageNumber) => {
+    if (isNaN(targetPageNumber)) return;
+
+    const targetPage = targetPageNumber.toString();
+    setPageNumberInput(targetPage);
+
     const pages = archive[selectedChannel][selectedDate];
     if (!pages) return;
-    if (isNaN(targetPageNumber)) return;
-    const targetPageIndex = pages.findIndex(page => parseInt(page.replace('.html', ''), 10) === targetPageNumber);
-    if (targetPageIndex !== -1) {
-      setCurrentPageIndex(targetPageIndex);
-      setPageNumberInput(targetPageNumber.toString());
+
+    const pagesWithSameBase = pages.filter(page => page.startsWith(targetPage + '.') || page.startsWith(targetPage + '-'));
+
+    if (pagesWithSameBase.length > 0) {
+      const firstSubPageIndex = pages.indexOf(pagesWithSameBase[0]);
+      setCurrentPageIndex(firstSubPageIndex);
+      setSubPageIndex(0);
+      setSubPages(pagesWithSameBase);
     } else {
-      // Page not found, do nothing (stay on current page)
+      const targetPageIndex = pages.findIndex(page => parseInt(page.replace('.html', ''), 10) === parseInt(targetPageNumber, 10));
+      if (targetPageIndex !== -1) {
+        setCurrentPageIndex(targetPageIndex);
+        setSubPageIndex(0);
+        setSubPages([]);
+      }
     }
   }, [archive, selectedChannel, selectedDate]);
 
   useEffect(() => {
+    if (subPages.length > 1 && carouselEnabled) {
+      carouselTimeoutRef.current = setInterval(() => {
+        setSubPageIndex(prevSubPageIndex => (prevSubPageIndex + 1) % subPages.length);
+      }, 10000); // 10 seconds
+    }
+    return () => {
+      if (carouselTimeoutRef.current) {
+        clearInterval(carouselTimeoutRef.current);
+      }
+    };
+  }, [subPages, carouselEnabled]);
+
+  useEffect(() => {
     if (!selectedChannel || !selectedDate) {
-      return; // Do not attach listener if channel or date not selected
+      return;
     }
 
     const handleKeyDown = (event) => {
-      // Ignore key presses if an input field is focused
       if (event.target.tagName === 'INPUT' || event.target.tagName === 'SELECT' || event.target.tagName === 'TEXTAREA') {
         return;
       }
@@ -48,27 +77,26 @@ function App() {
       const isNumber = event.key >= '0' && event.key <= '9';
 
       if (event.key === 'Enter') {
-        event.preventDefault(); // Prevent default Enter behavior
+        event.preventDefault();
         if (numberBuffer.length === 3) {
           const pageNumber = parseInt(numberBuffer, 10);
           handleGoToPage(pageNumber);
         }
-        setNumberBuffer(''); // Always clear buffer on Enter
+        setNumberBuffer('');
       } else if (isNumber) {
-        event.preventDefault(); // Prevent default number key behavior
+        event.preventDefault();
         setNumberBuffer((prevBuffer) => {
           let newBuffer = prevBuffer + event.key;
           if (newBuffer.length === 3) {
             const pageNumber = parseInt(newBuffer, 10);
             handleGoToPage(pageNumber);
-            return ''; // Clear buffer after 3 digits
+            return '';
           } else if (newBuffer.length > 3) {
             newBuffer = newBuffer.substring(newBuffer.length - 3);
           }
           return newBuffer;
         });
       } else {
-        // Clear buffer if a non-numeric key is pressed
         setNumberBuffer('');
       }
     };
@@ -102,14 +130,19 @@ function App() {
     if (selectedChannel && selectedDate && archive && archive[selectedChannel] && archive[selectedChannel][selectedDate]) {
       const pages = archive[selectedChannel][selectedDate];
       if (pages.length > 0) {
-        const pageFilename = pages[currentPageIndex];
-        // Use selectedDate directly as it matches folder name (DD-MM-YYYY)
+        let pageFilename;
+        if (subPages.length > 0) {
+          pageFilename = subPages[subPageIndex];
+        } else {
+          pageFilename = pages[currentPageIndex];
+        }
+
         const pageUrl = `/archive/${selectedChannel}/${selectedDate}/${pageFilename}`;
         fetch(pageUrl)
           .then(response => response.text())
           .then(html => {
             setPageContent(html);
-            const pageNumber = parseInt(pageFilename.replace('.html', ''), 10);
+            const pageNumber = parseInt(pageFilename.replace('.html', '').split('-')[0], 10);
             setPageNumberInput(pageNumber.toString());
           })
           .catch(err => {
@@ -122,7 +155,7 @@ function App() {
     } else {
       setPageContent('');
     }
-  }, [selectedChannel, selectedDate, currentPageIndex, archive]);
+  }, [selectedChannel, selectedDate, currentPageIndex, subPageIndex, subPages, archive]);
 
   useEffect(() => {
     const container = pageContentContainerRef.current;
@@ -153,17 +186,25 @@ function App() {
     setSelectedChannel(channel);
     setSelectedDate(null);
     setCurrentPageIndex(0);
-    setPageNumberInput(''); // Clear page number input
+    setSubPageIndex(0);
+    setSubPages([]);
+    setPageNumberInput('');
   };
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
     setCurrentPageIndex(0);
-    setPageNumberInput(''); // Clear page number input
+    setSubPageIndex(0);
+    setSubPages([]);
+    setPageNumberInput('');
   };
 
   const handleCrtEffectToggle = () => {
     setCrtEffectsEnabled(!crtEffectsEnabled);
+  };
+
+  const handleCarouselToggle = () => {
+    setCarouselEnabled(!carouselEnabled);
   };
 
   const handleBackClick = () => {
@@ -173,6 +214,8 @@ function App() {
       setSelectedChannel(null);
     }
     setCurrentPageIndex(0);
+    setSubPageIndex(0);
+    setSubPages([]);
   };
 
   const handlePageNumberChange = (event) => {
@@ -182,13 +225,28 @@ function App() {
   const handlePageNavigation = (direction) => {
     const pages = archive[selectedChannel][selectedDate];
     if (!pages) return;
+
+    const currentPageFilename = pages[currentPageIndex];
+    const currentPageBase = currentPageFilename.split('-')[0];
+
     let newIndex = currentPageIndex;
     if (direction === 'next') {
       newIndex = (currentPageIndex + 1) % pages.length;
+      while(pages[newIndex].split('-')[0] === currentPageBase) {
+        newIndex = (newIndex + 1) % pages.length;
+      }
     } else if (direction === 'prev') {
       newIndex = (currentPageIndex - 1 + pages.length) % pages.length;
+      const newPageBase = pages[newIndex].split('-')[0];
+      while(pages[newIndex].split('-')[0] === newPageBase) {
+        newIndex = (newIndex - 1 + pages.length) % pages.length;
+      }
+      newIndex = (newIndex + 1) % pages.length;
     }
-    setCurrentPageIndex(newIndex);
+    
+    const newPageFilename = pages[newIndex];
+    const newPageBase = newPageFilename.split('-')[0].split('.')[0];
+    handleGoToPage(parseInt(newPageBase, 10));
   };
 
   return (
@@ -201,12 +259,14 @@ function App() {
         onDateChange={handleDateChange}
         crtEffectsEnabled={crtEffectsEnabled}
         onCrtEffectToggle={handleCrtEffectToggle}
+        carouselEnabled={carouselEnabled}
+        onCarouselToggle={handleCarouselToggle}
         pageNumberInput={pageNumberInput}
         onPageNumberChange={handlePageNumberChange}
         onGoToPage={handleGoToPage}
       />
       <div className="main-content">
-        <Header numberBuffer={numberBuffer} currentPageIndex={currentPageIndex} selectedChannel={selectedChannel} selectedDate={selectedDate} archive={archive} />
+        <Header numberBuffer={numberBuffer} currentPageIndex={currentPageIndex} subPageIndex={subPageIndex} subPages={subPages} selectedChannel={selectedChannel} selectedDate={selectedDate} archive={archive} />
         <TeletextTitle />
         <CrtEffect crtEffectsEnabled={crtEffectsEnabled} pageContent={pageContent}>
           {loading && <p>Loading...</p>}

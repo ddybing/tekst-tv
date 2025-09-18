@@ -49,6 +49,22 @@ try {
     for (const date of dates) {
       const datePath = path.join(channelPath, date);
       const pages = getFiles(datePath);
+
+      // Sort pages numerically, handling sub-pages
+      pages.sort((a, b) => {
+        const pageNumA = a.split('.')[0].split('-').map(Number);
+        const pageNumB = b.split('.')[0].split('-').map(Number);
+
+        if (pageNumA[0] !== pageNumB[0]) {
+          return pageNumA[0] - pageNumB[0];
+        }
+
+        const subPageA = pageNumA.length > 1 ? pageNumA[1] : 0;
+        const subPageB = pageNumB.length > 1 ? pageNumB[1] : 0;
+
+        return subPageA - subPageB;
+      });
+
       archiveIndex[channel][date] = pages;
     }
   }
