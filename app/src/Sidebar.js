@@ -1,7 +1,9 @@
 import React from 'react';
 
-const Sidebar = ({ archive, selectedChannel, selectedDate, onChannelChange, onDateChange, crtEffectsEnabled, onCrtEffectToggle, carouselEnabled, onCarouselToggle, pageNumberInput, onPageNumberChange, onGoToPage }) => {
+const Sidebar = ({ archive, selectedChannel, selectedDate, selectedTime, onChannelChange, onDateChange, onTimeChange, crtEffectsEnabled, onCrtEffectToggle, carouselEnabled, onCarouselToggle, pageNumberInput, onPageNumberChange, onGoToPage }) => {
   const channels = archive ? Object.keys(archive) : [];
+  const dates = selectedChannel && archive[selectedChannel] ? Object.keys(archive[selectedChannel]) : [];
+  const times = selectedDate && dates.length > 0 && archive[selectedChannel][selectedDate] && !Array.isArray(archive[selectedChannel][selectedDate]) ? Object.keys(archive[selectedChannel][selectedDate]) : [];
 
   const handleChannelChange = (event) => {
     onChannelChange(event.target.value);
@@ -9,6 +11,10 @@ const Sidebar = ({ archive, selectedChannel, selectedDate, onChannelChange, onDa
 
   const handleDateChange = (event) => {
     onDateChange(event.target.value);
+  };
+
+  const handleTimeChange = (event) => {
+    onTimeChange(event.target.value);
   };
 
   const handleGoToPageClick = () => {
@@ -37,11 +43,22 @@ const Sidebar = ({ archive, selectedChannel, selectedDate, onChannelChange, onDa
         <label htmlFor="date-select">Dato</label>
         <select id="date-select" value={selectedDate || ''} onChange={handleDateChange} disabled={!selectedChannel}>
           <option value="" disabled>Velg en dato</option>
-          {selectedChannel && archive[selectedChannel] && Object.keys(archive[selectedChannel]).map(date => (
+          {dates.map(date => (
             <option key={date} value={date}>{date.replace(/-/g, '.')}</option>
           ))}
         </select>
       </div>
+      {times.length > 1 && (
+        <div className="dropdown-container">
+          <label htmlFor="time-select">Tid</label>
+          <select id="time-select" value={selectedTime || ''} onChange={handleTimeChange} disabled={!selectedDate}>
+            <option value="" disabled>Velg en tid</option>
+            {times.map(time => (
+              <option key={time} value={time}>{time}</option>
+            ))}
+          </select>
+        </div>
+      )}
       <div className="page-jump-container">
         <label htmlFor="page-number-input">Side</label>
         <input
