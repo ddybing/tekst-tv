@@ -48,41 +48,24 @@ try {
 
     for (const date of dates) {
       const datePath = path.join(channelPath, date);
-      const timeDirs = getDirectories(datePath);
+      const pages = getFiles(datePath);
 
-      if (timeDirs.length > 0 && /^\d{4}$/.test(timeDirs[0])) {
-        // This date has time-based captures
-        archiveIndex[channel][date] = {};
-        for (const time of timeDirs) {
-          const timePath = path.join(datePath, time);
-          const pages = getFiles(timePath);
+      // Sort pages numerically, handling sub-pages
+      pages.sort((a, b) => {
+        const pageNumA = a.split('.')[0].split('-').map(Number);
+        const pageNumB = b.split('.')[0].split('-').map(Number);
 
-          pages.sort((a, b) => {
-            const pageNumA = a.split('.')[0].split('-').map(Number);
-            const pageNumB = b.split('.')[0].split('-').map(Number);
-            if (pageNumA[0] !== pageNumB[0]) return pageNumA[0] - pageNumB[0];
-            const subPageA = pageNumA.length > 1 ? pageNumA[1] : 0;
-            const subPageB = pageNumB.length > 1 ? pageNumB[1] : 0;
-            return subPageA - subPageB;
-          });
-
-          archiveIndex[channel][date][time] = pages;
+        if (pageNumA[0] !== pageNumB[0]) {
+          return pageNumA[0] - pageNumB[0];
         }
-      } else {
-        // This date has pages directly under it (backward compatibility)
-        const pages = getFiles(datePath);
 
-        pages.sort((a, b) => {
-          const pageNumA = a.split('.')[0].split('-').map(Number);
-          const pageNumB = b.split('.')[0].split('-').map(Number);
-          if (pageNumA[0] !== pageNumB[0]) return pageNumA[0] - pageNumB[0];
-          const subPageA = pageNumA.length > 1 ? pageNumA[1] : 0;
-          const subPageB = pageNumB.length > 1 ? pageNumB[1] : 0;
-          return subPageA - subPageB;
-        });
+        const subPageA = pageNumA.length > 1 ? pageNumA[1] : 0;
+        const subPageB = pageNumB.length > 1 ? pageNumB[1] : 0;
 
-        archiveIndex[channel][date] = pages;
-      }
+        return subPageA - subPageB;
+      });
+
+      archiveIndex[channel][date] = pages;
     }
   }
 
