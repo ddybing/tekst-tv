@@ -111,7 +111,7 @@ function App() {
   }, [handleGoToPage, selectedChannel, selectedDate]);
 
   useEffect(() => {
-    fetch('/index.json')
+    fetch('https://raw.githubusercontent.com/YOUR_USERNAME/tekst-tv-archive/main/index.json')
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -150,8 +150,8 @@ function App() {
         }
 
         const pageUrl = timeToUse
-          ? `/archive/${selectedChannel}/${selectedDate}/${timeToUse}/${pageFilename}`
-          : `/archive/${selectedChannel}/${selectedDate}/${pageFilename}`;
+          ? `https://raw.githubusercontent.com/YOUR_USERNAME/tekst-tv-archive/main/archive/${selectedChannel}/${selectedDate}/${timeToUse}/${pageFilename}`
+          : `https://raw.githubusercontent.com/YOUR_USERNAME/tekst-tv-archive/main/archive/${selectedChannel}/${selectedDate}/${pageFilename}`;
 
         fetch(pageUrl)
           .then(response => response.text())
@@ -298,7 +298,6 @@ function App() {
         <TeletextTitle />
         <CrtEffect crtEffectsEnabled={crtEffectsEnabled} pageContent={pageContent}>
           {loading && <p>Loading...</p>}
-          {error && <p>Error: {error.message}</p>}
           {pageContent && (
             <div ref={pageContentContainerRef} dangerouslySetInnerHTML={{ __html: pageContent }} />
           )}

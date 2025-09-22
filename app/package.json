@@ -13,10 +13,10 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "prestart": "cp -r ../archive ./public/archive || true",
+    "prestart": "ARCHIVE_REPO_URL=\"https://github.com/YOUR_USERNAME/tekst-tv-archive.git\" && ARCHIVE_DIR=\"/tmp/tekst-tv-archive\" && rm -rf $ARCHIVE_DIR && git clone $ARCHIVE_REPO_URL $ARCHIVE_DIR && node ../scripts/generate-archive-index.js $ARCHIVE_DIR && rm -rf $ARCHIVE_DIR",
     "start": "react-scripts start",
-    "prebuild": "cp -r ../archive ./public/archive || true",
-    "build": "node ../scripts/generate-archive-index.js && react-scripts build",
+    "prebuild": "ARCHIVE_REPO_URL=\"https://github.com/YOUR_USERNAME/tekst-tv-archive.git\" && ARCHIVE_DIR=\"/tmp/tekst-tv-archive\" && rm -rf $ARCHIVE_DIR && git clone $ARCHIVE_REPO_URL $ARCHIVE_DIR && node ../scripts/generate-archive-index.js $ARCHIVE_DIR && rm -rf $ARCHIVE_DIR",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

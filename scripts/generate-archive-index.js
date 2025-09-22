@@ -1,7 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const archivePath = path.join(__dirname, '..', 'archive');
+const providedArchivePath = process.argv[2];
+const archivePath = providedArchivePath ? path.resolve(providedArchivePath) : path.join(__dirname, '..', 'archive');
 const outputPath = path.join(__dirname, '..', 'app', 'public', 'index.json');
 
 function getDirectories(sourcePath) {

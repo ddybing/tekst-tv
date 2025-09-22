@@ -31,18 +31,18 @@ const Sidebar = ({ archive, selectedChannel, selectedDate, selectedTime, onChann
   return (
     <div className="sidebar">
       <div className="dropdown-container">
-        <label htmlFor="channel-select">Kanal</label>
+        <label htmlFor="channel-select">Channel</label>
         <select id="channel-select" value={selectedChannel || ''} onChange={handleChannelChange}>
-          <option value="" disabled>Velg en kanal</option>
+          <option value="" disabled>Select a channel</option>
           {channels.map(channel => (
             <option key={channel} value={channel}>{channel}</option>
           ))}
         </select>
       </div>
       <div className="dropdown-container">
-        <label htmlFor="date-select">Dato</label>
+        <label htmlFor="date-select">Date</label>
         <select id="date-select" value={selectedDate || ''} onChange={handleDateChange} disabled={!selectedChannel}>
-          <option value="" disabled>Velg en dato</option>
+          <option value="" disabled>Select a date</option>
           {dates.map(date => (
             <option key={date} value={date}>{date.replace(/-/g, '.')}</option>
           ))}
@@ -50,9 +50,9 @@ const Sidebar = ({ archive, selectedChannel, selectedDate, selectedTime, onChann
       </div>
       {times.length > 1 && (
         <div className="dropdown-container">
-          <label htmlFor="time-select">Tid</label>
+          <label htmlFor="time-select">Time</label>
           <select id="time-select" value={selectedTime || ''} onChange={handleTimeChange} disabled={!selectedDate}>
-            <option value="" disabled>Velg en tid</option>
+            <option value="" disabled>Select a time</option>
             {times.map(time => (
               <option key={time} value={time}>{time}</option>
             ))}
@@ -60,21 +60,21 @@ const Sidebar = ({ archive, selectedChannel, selectedDate, selectedTime, onChann
         </div>
       )}
       <div className="page-jump-container">
-        <label htmlFor="page-number-input">Side</label>
+        <label htmlFor="page-number-input">Page</label>
         <input
           type="text" // Changed to text to allow underscores
           id="page-number-input"
           value={pageNumberInput}
           onChange={onPageNumberChange}
           onKeyPress={handleKeyPress}
-          placeholder="Sidenummer"
+          placeholder="Page number"
           disabled={!selectedDate}
           autoComplete="off"
         />
-        <button onClick={handleGoToPageClick} disabled={!selectedDate}>Gå</button>
+        <button onClick={handleGoToPageClick} disabled={!selectedDate}>Go</button>
       </div>
       <div className="checkbox-container">
-        <label htmlFor="crt-effect-toggle">CRT Effekt</label>
+        <label htmlFor="crt-effect-toggle">CRT Effect</label>
         <input
           type="checkbox"
           id="crt-effect-toggle"
@@ -83,7 +83,7 @@ const Sidebar = ({ archive, selectedChannel, selectedDate, selectedTime, onChann
         />
       </div>
       <div className="checkbox-container">
-        <label htmlFor="carousel-toggle" title="Veksle mellom undersider automatisk">Veksle undersider</label>
+        <label htmlFor="carousel-toggle" title="Toggle automatic subpage cycling">Toggle subpages</label>
         <input
           type="checkbox"
           id="carousel-toggle"
@@ -93,7 +93,7 @@ const Sidebar = ({ archive, selectedChannel, selectedDate, selectedTime, onChann
         />
       </div>
       <div className="description-container">
-        <p>Velg kanal og dato for å vise tekst-TV. Bruk tallene på tastaturet til å skrive inn sidenummer, f.eks. 103 for side 103.</p>
+        <p>Select channel and date to view teletext. Use the numbers on your keyboard to type in the page number, e.g., 103 for page 103.</p>
       </div>
     </div>
   );
