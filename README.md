@@ -8,7 +8,7 @@ This is a web based teletext viewer created specifically for viewing teletext pa
 
 
 
-
+A live preview of the viewer is available at:
 [text.ddybing.no](https://text.ddybing.no/)
 
 
