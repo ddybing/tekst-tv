@@ -1,0 +1,27 @@
+# Dockerfile.updater
+FROM node:20-alpine3.19
+
+# Update Alpine packages to latest versions to reduce vulnerabilities
+RUN apk update && apk upgrade
+
+WORKDIR /app
+
+# Install git
+RUN apk add --no-cache git
+
+# Copy necessary scripts and package.json for generate-archive-index.js
+COPY scripts/generate-archive-index.js ./scripts/generate-archive-index.js
+# If generate-archive-index.js has any npm dependencies, copy package.json and install them
+# For now, assuming it's standalone, but if it needs 'fs-extra' or similar, add:
+# COPY scripts/package*.json ./scripts/
+# RUN npm install --prefix ./scripts ./scripts
+
+# Copy the update script
+COPY scripts/update-archive.sh ./scripts/update-archive.sh
+RUN chmod +x ./scripts/update-archive.sh
+
+# The ENV line is still useful to make it available to the shell script
+ENV ARCHIVE_REPO_URL=$ARCHIVE_REPO_URL
+ENV UPDATE_INTERVAL_SECONDS=$UPDATE_INTERVAL_SECONDS
+
+CMD ["/bin/bash", "./scripts/update-archive.sh"]

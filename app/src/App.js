@@ -111,7 +111,7 @@ function App() {
   }, [handleGoToPage, selectedChannel, selectedDate]);
 
   useEffect(() => {
-    fetch('https://raw.githubusercontent.com/YOUR_USERNAME/tekst-tv-archive/main/index.json')
+    fetch('/archive/index.json') // Fetch from local Nginx
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -150,8 +150,8 @@ function App() {
         }
 
         const pageUrl = timeToUse
-          ? `https://raw.githubusercontent.com/YOUR_USERNAME/tekst-tv-archive/main/archive/${selectedChannel}/${selectedDate}/${timeToUse}/${pageFilename}`
-          : `https://raw.githubusercontent.com/YOUR_USERNAME/tekst-tv-archive/main/archive/${selectedChannel}/${selectedDate}/${pageFilename}`;
+          ? `/archive/${selectedChannel}/${selectedDate}/${timeToUse}/${pageFilename}`
+          : `/archive/${selectedChannel}/${selectedDate}/${pageFilename}`;
 
         fetch(pageUrl)
           .then(response => response.text())
