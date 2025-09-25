@@ -38,10 +38,8 @@ try {
 
     // Sort dates chronologically
     dates.sort((a, b) => {
-      const partsA = a.split('-').map(Number); // [DD, MM, YYYY]
-      const partsB = b.split('-').map(Number); // [DD, MM, YYYY]
-      const dateA = new Date(partsA[2], partsA[1] - 1, partsA[0]);
-      const dateB = new Date(partsB[2], partsB[1] - 1, partsB[0]);
+      const dateA = new Date(a); // YYYY-MM-DD is directly parsable
+      const dateB = new Date(b); // YYYY-MM-DD is directly parsable
       return dateA - dateB;
     });
 

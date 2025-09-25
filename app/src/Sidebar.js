@@ -44,7 +44,7 @@ const Sidebar = ({ archive, selectedChannel, selectedDate, selectedTime, onChann
         <select id="date-select" value={selectedDate || ''} onChange={handleDateChange} disabled={!selectedChannel}>
           <option value="" disabled>Select a date</option>
           {dates.map(date => (
-            <option key={date} value={date}>{date.replace(/-/g, '.')}</option>
+            <option key={date} value={date}>{date}</option>
           ))}
         </select>
       </div>
