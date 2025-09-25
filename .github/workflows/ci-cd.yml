@@ -1,0 +1,50 @@
+name: CI/CD Pipeline for Docker Compose
+
+on:
+  push:
+    branches:
+      - main # Trigger on pushes to the main branch
+
+jobs:
+  build-and-push-docker-images:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write # Required to push images to GHCR
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # --- Build and Push Frontend Image ---
+      - name: Build and push frontend Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile.frontend # Specify the Dockerfile for the frontend
+          push: true
+          tags: ghcr.io/${{ github.repository }}/frontend:latest # Tag for frontend service
+          platforms: linux/amd64
+
+      # --- Build and Push Updater Image ---
+      - name: Build and push updater Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile.updater # Specify the Dockerfile for the updater
+          push: true
+          tags: ghcr.io/${{ github.repository }}/updater:latest # Tag for updater service
+          platforms: linux/amd64
+          # Pass the default ARCHIVE_REPO_URL as a build-arg for the updater image
+          # This ensures the image is self-contained with a default, but can be overridden at runtime
+
