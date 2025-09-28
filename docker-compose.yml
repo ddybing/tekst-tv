@@ -11,6 +11,7 @@ services:
       - archive_data:/usr/share/nginx/html/app/public # Mount for index.json
 
   updater:
+    entrypoint: ["/bin/bash", "-c", "./scripts/update-archive.sh"]
     build:
       context: .
       dockerfile: Dockerfile.updater

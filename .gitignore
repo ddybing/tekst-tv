@@ -16,3 +16,5 @@ node_modules
 
 # archive directory
 archive/
+
+/app/public/index.json
