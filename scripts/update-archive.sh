@@ -1,17 +1,17 @@
 #!/bin/sh
 
 ARCHIVE_DIR="/archive-data" # Directory inside the container where archive will be stored
-INDEX_OUTPUT_DIR="/app/app/public" # Where index.json should be generated
+INDEX_OUTPUT_DIR="/archive-data/index.json" # Where index.json should be generated
 
 echo "Starting archive updater..."
 echo "Archive Repo URL: $ARCHIVE_REPO_URL"
 echo "Update Interval: $UPDATE_INTERVAL_SECONDS seconds"
 
-# Ensure the index output directory exists
-mkdir -p "$INDEX_OUTPUT_DIR"
 
 # Initial clone
 if [ ! -d "$ARCHIVE_DIR/.git" ]; then
+  echo "Listing contents of /archive-data before clone:"
+  ls -la /archive-data
   echo "Cloning initial archive from $ARCHIVE_REPO_URL to $ARCHIVE_DIR..."
   git clone "$ARCHIVE_REPO_URL" "$ARCHIVE_DIR"
   if [ $? -ne 0 ]; then
