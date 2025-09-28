@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Sidebar = ({ archive, selectedChannel, selectedDate, selectedTime, onChannelChange, onDateChange, onTimeChange, crtEffectsEnabled, onCrtEffectToggle, carouselEnabled, onCarouselToggle, pageNumberInput, onPageNumberChange, onGoToPage }) => {
+const Sidebar = ({ archive, selectedChannel, selectedDate, selectedTime, onChannelChange, onDateChange, onTimeChange, crtEffectsEnabled, onCrtEffectToggle, carouselEnabled, onCarouselToggle, pageNumberInput, onPageNumberChange, onGoToPage, lastPulled, latestPageUpdate }) => {
   const channels = archive ? Object.keys(archive) : [];
   const dates = selectedChannel && archive[selectedChannel] ? Object.keys(archive[selectedChannel]) : [];
   const times = selectedDate && dates.length > 0 && archive[selectedChannel][selectedDate] && !Array.isArray(archive[selectedChannel][selectedDate]) ? Object.keys(archive[selectedChannel][selectedDate]) : [];
@@ -94,6 +94,10 @@ const Sidebar = ({ archive, selectedChannel, selectedDate, selectedTime, onChann
       </div>
       <div className="description-container">
         <p>Select channel and date to view teletext. Use the numbers on your keyboard to type in the page number, e.g., 103 for page 103.</p>
+      </div>
+      <div className="sidebar-status">
+        {lastPulled && <p>Last pulled: {new Date(lastPulled).toLocaleString()}</p>}
+        {latestPageUpdate && <p>Latest page update: {new Date(latestPageUpdate).toLocaleString()}</p>}
       </div>
     </div>
   );
