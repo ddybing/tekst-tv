@@ -29,10 +29,33 @@ function getFiles(sourcePath) {
   });
 }
 
+function hasHtmlFiles(dirPath) {
+  if (!fs.existsSync(dirPath)) return false;
+
+  const entries = fs.readdirSync(dirPath, { withFileTypes: true });
+
+  for (const entry of entries) {
+    const fullPath = path.join(dirPath, entry.name);
+    if (entry.isDirectory()) {
+      if (hasHtmlFiles(fullPath)) {
+        return true;
+      }
+    } else if (entry.isFile() && path.extname(entry.name) === '.html') {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 const archiveIndex = {};
 
 try {
-  const channels = getDirectories(archivePath);
+  const potentialChannels = getDirectories(archivePath);
+  const channels = potentialChannels.filter(channel => {
+    const channelPath = path.join(archivePath, channel);
+    return hasHtmlFiles(channelPath);
+  });
 
   for (const channel of channels) {
     const channelPath = path.join(archivePath, channel);
