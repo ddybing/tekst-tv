@@ -20,6 +20,8 @@ function App() {
   const [pageNumberInput, setPageNumberInput] = useState('');
   const [crtEffectsEnabled, setCrtEffectsEnabled] = useState(true);
   const [carouselEnabled, setCarouselEnabled] = useState(true);
+  const [lastPulled, setLastPulled] = useState(null);
+  const [latestPageUpdate, setLatestPageUpdate] = useState(null);
 
   const [numberBuffer, setNumberBuffer] = useState('');
 
@@ -111,21 +113,23 @@ function App() {
   }, [handleGoToPage, selectedChannel, selectedDate]);
 
   useEffect(() => {
-    fetch('/archive/index.json') // Fetch from local Nginx
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(data => {
-        setArchive(data);
-        setLoading(false);
-      })
-      .catch(error => {
-        setError(error);
-        setLoading(false);
-      });
+    Promise.all([
+      fetch('/archive/index.json'),
+      fetch('/archive/status.json')
+    ])
+    .then(([resIndex, resStatus]) => 
+      Promise.all([resIndex.json(), resStatus.json()])
+    )
+    .then(([indexData, statusData]) => {
+      setArchive(indexData);
+      setLastPulled(statusData.lastPulled);
+      setLatestPageUpdate(statusData.latestPageUpdate);
+      setLoading(false);
+    })
+    .catch(error => {
+      setError(error);
+      setLoading(false);
+    });
   }, []);
 
   useEffect(() => {
@@ -292,6 +296,8 @@ function App() {
         pageNumberInput={pageNumberInput}
         onPageNumberChange={handlePageNumberChange}
         onGoToPage={handleGoToPage}
+        lastPulled={lastPulled}
+        latestPageUpdate={latestPageUpdate}
       />
       <div className="main-content">
         <Header numberBuffer={numberBuffer} currentPageIndex={currentPageIndex} subPageIndex={subPageIndex} subPages={subPages} selectedChannel={selectedChannel} selectedDate={selectedDate} archive={archive} />
