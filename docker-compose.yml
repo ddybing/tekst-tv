@@ -4,14 +4,14 @@ services:
       context: .
       dockerfile: Dockerfile.frontend
     ports:
+      # To expose the port only on the host's localhost interface, change the mapping to "127.0.0.1:80:80".
       - "80:80"
     volumes:
       # Mount the shared volume where updater places the archive data and index.json
       - archive_data:/usr/share/nginx/html/archive
-      - archive_data:/usr/share/nginx/html/app/public # Mount for index.json
 
   updater:
-    entrypoint: ["/bin/bash", "-c", "./scripts/update-archive.sh"]
+    entrypoint: ["/bin/sh", "-c", "./scripts/update-archive.sh"]
     build:
       context: .
       dockerfile: Dockerfile.updater
@@ -21,9 +21,7 @@ services:
       UPDATE_INTERVAL_SECONDS: ${UPDATE_INTERVAL_SECONDS:-3600} # 1 hour, can be overridden
     volumes:
       # Mount the same shared volume
-      - archive_data:/archive-data # Where updater clones the repo
-      - archive_data:/app/app/public # Where updater generates index.json
-    # Restart policy to ensure updater keeps running
+      - archive_data:/archive-data # Where updater clones the repo and generates index.json
     restart: unless-stopped
 
 volumes:
